@@ -61,7 +61,7 @@ def generate_windmill_data(id):
         "value": {
             "velocidad_viento": round(random.uniform(0, 25), 2),
             "direccion_viento": round(random.uniform(0, 360), 2),
-            "produccion_energia": round(random.uniform(0, 1000), 2),
+            "produccion_energia": round(random.uniform(0, 100), 2),
             "temperatura_ambiente": round(random.uniform(-10, 40), 2),
             "humedad": round(random.uniform(0, 100), 2),
             "presion_atmosferica": round(random.uniform(900, 1100), 2),
@@ -71,6 +71,7 @@ def generate_windmill_data(id):
     return data
 
 # Conectar con Elasticsearch (asegúrate de que Elasticsearch está en funcionamiento)
+# es = Elasticsearch(['http://172.18.0.2:9200'])
 es = Elasticsearch(['http://localhost:9200'])
 
 # Crear el índice molinos si no existe
@@ -100,7 +101,7 @@ mapping_molinos = {
 if not es.indices.exists(index=index_name_molinos):
     es.indices.create(index=index_name_molinos, body=mapping_molinos)
 
-espera = 5
+espera = 10
 
 def generate_and_write_data():
     global espera

@@ -1,8 +1,9 @@
 # Entrega-5-iot
-Repositorio para la entrega 5 de la asignatura de Desarrollo de aplicaciones IOT
+Claudia Viñals Perlado
 
-# Miembros del equipo
 # Explicación de los pasos seguidos
+- Crear docker compose de kibana y elasticsearch
+- Crear archivo de Python para el envio de datos
 # Instrucciones de uso
 # Posibles vías de mejora
 # Problemas / Retos encontrados
