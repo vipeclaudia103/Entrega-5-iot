@@ -8,43 +8,53 @@ from datetime import datetime, timezone
 info_modelos = [
     {
         "modelo": "G58",
-        "ubicacion": "Biota Zona Norte"
+        "latitud": 42.7275,
+        "longitud": -2.1189
     },    
     {
         "modelo": "SG 14-222 DD",
-        "ubicacion": "Biota Zona Suroeste"
+        "latitud": 42.1564,
+        "longitud": -1.5006
     },
     {
         "modelo": "V164-9.5 MW",
-        "ubicacion": "Biota Zona Oeste"
+        "latitud": 42.7966,
+        "longitud": -1.5714
     },    
     {
         "modelo": "EP3",
-        "ubicacion": "Biota Zona Sur"
+        "latitud": 36.0268,
+        "longitud": -5.6029
     },
     {
         "modelo": "V164-9.5 MW",
-        "ubicacion": "Biota Zona Este"
+        "latitud": 41.2537,
+        "longitud": -3.3841
     },        
     {
         "modelo": "N149",
-        "ubicacion": "Biota Zona Norte"
+        "latitud": 41.1931,
+        "longitud": 0.9238
     },    
     {
         "modelo": "SG 14-222 DD",
-        "ubicacion": "Biota Zona Sur"
+        "latitud": 39.7855,
+        "longitud": -1.5069
     },
     {
         "modelo": "N149",
-        "ubicacion": "Biota Zona Oeste"
+        "latitud": 42.1561,
+        "longitud": -1.4995
     },    
     {
         "modelo": "EP3",
-        "ubicacion": "Biota Zona Central"
+        "latitud": 41.1707,
+        "longitud": 0.8285
     },
     {
         "modelo": "G58",
-        "ubicacion": "Biota Zona Este"
+        "latitud": 41.1462,
+        "longitud": -1.6677
     }
 ]
 
@@ -56,8 +66,11 @@ def generate_windmill_data(id):
     data = {
         "id": str(id),
         "model": info_modelos[id]["modelo"],
-        "location": info_modelos[id]["ubicacion"],
-        "timestamp":datetime.now(timezone.utc),
+        "location": {
+            "lat": info_modelos[id]["latitud"],
+            "lon": info_modelos[id]["longitud"]
+        },
+        "timestamp": datetime.now(timezone.utc),
         "value": {
             "velocidad_viento": round(random.uniform(0, 25), 2),
             "direccion_viento": round(random.uniform(0, 360), 2),
@@ -71,7 +84,6 @@ def generate_windmill_data(id):
     return data
 
 # Conectar con Elasticsearch (asegúrate de que Elasticsearch está en funcionamiento)
-# es = Elasticsearch(['http://172.18.0.2:9200'])
 es = Elasticsearch(['http://localhost:9200'])
 
 # Crear el índice molinos si no existe
@@ -82,7 +94,7 @@ mapping_molinos = {
             "timestamp": {"type": "date"},
             "id": {"type": "keyword"},
             "model": {"type": "text"},
-            "location": {"type": "text"},
+            "location": {"type": "geo_point"},
             "value": {
                 "properties": {
                     "velocidad_viento": {"type": "float"},
@@ -98,8 +110,9 @@ mapping_molinos = {
     }
 }
 
-if not es.indices.exists(index=index_name_molinos):
-    es.indices.create(index=index_name_molinos, body=mapping_molinos)
+# Eliminar el índice si ya existe
+if es.indices.exists(index=index_name_molinos):
+    es.indices.delete(index=index_name_molinos)
 
 espera = 10
 
