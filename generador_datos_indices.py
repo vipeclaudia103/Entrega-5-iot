@@ -112,7 +112,7 @@ mapping_molinos = {
 
 # Eliminar el índice si ya existe
 if es.indices.exists(index=index_name_molinos):
-    es.indices.delete(index=index_name_molinos)
+    es.indices.delete(index=index_name_molinos, body=mapping_molinos)
 
 espera = 10
 
